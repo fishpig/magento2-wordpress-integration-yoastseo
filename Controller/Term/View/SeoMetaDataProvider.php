@@ -78,7 +78,7 @@ class SeoMetaDataProvider extends \FishPig\WordPress\Controller\Term\View\SeoMet
 
         // Canonical
         $this->setCanonicalUrl(
-            $this->getMetaValue($term, $this->config::FIELD_CANONICAL) ?: $term->getUrl()
+            $this->getMetaValue($term, 'wpseo_canonical') ?: $term->getUrl()
         );
 
         // Robots
@@ -89,8 +89,10 @@ class SeoMetaDataProvider extends \FishPig\WordPress\Controller\Term\View\SeoMet
                 $robots['index'] = 'noindex';
             }
 
-            if (($value = trim($this->getMetaValue($term, $this->config::FIELD_NOINDEX))) !== '') {
-                $robots['index'] = $value;
+            $noindex = $this->getMetaValue($term, 'wpseo_noindex');
+
+            if ($noindex === 'noindex' || $noindex === 'index') {
+                $robots['index'] = $noindex;
             }
 
             if ($robots = array_filter($robots)) {
