@@ -11,6 +11,12 @@ namespace FishPig\WordPress_Yoast\Controller\Term\View;
 class SeoMetaDataProvider extends \FishPig\WordPress\Controller\Term\View\SeoMetaDataProvider
 {
     /**
+     * Keys used by Yoast in the wpseo_taxonomy_meta option
+     */
+    const FIELD_NOINDEX = 'wpseo_noindex';
+    const FIELD_CANONICAL = 'wpseo_canonical';
+
+    /**
      * @auto
      */
     protected $config = null;
@@ -78,25 +84,39 @@ class SeoMetaDataProvider extends \FishPig\WordPress\Controller\Term\View\SeoMet
 
         // Canonical
         $this->setCanonicalUrl(
-            $this->getMetaValue($term, $this->config::FIELD_CANONICAL) ?: $term->getUrl()
+            $this->getMetaValue($term, self::FIELD_CANONICAL) ?: $term->getUrl()
         );
 
         // Robots
-        if ($this->getBlogInfo()->isBlogPublic()) {
-            $robots = ['index' => 'index', 'follow' => 'follow'];
-
-            if ($this->config->isTypeNoindex('tax_' . $term->getTaxonomy())) {
-                $robots['index'] = 'noindex';
-            }
-
-            if (($value = trim($this->getMetaValue($term, $this->config::FIELD_NOINDEX))) !== '') {
-                $robots['index'] = $value;
-            }
-
-            if ($robots = array_filter($robots)) {
-                $this->setRobots(implode(',', $robots));
-            }
+        if ($robots = $this->getRobots($term)) {
+            $this->setRobots(implode(',', $robots));
         }
+    }
+
+    /**
+     * @param  \FishPig\WordPress\Model\Term $term
+     * @return array
+     */
+    public function getRobots(\FishPig\WordPress\Model\Term $term): array
+    {
+        if (!$this->getBlogInfo()->isBlogPublic()) {
+            return ['index' => 'noindex', 'follow' => 'nofollow'];
+        }
+
+        $robots = ['index' => 'index', 'follow' => 'follow'];
+
+        if ($this->config->isTypeNoindex('tax_' . $term->getTaxonomy())) {
+            $robots['index'] = 'noindex';
+        }
+
+        // Yoast stores 'default', 'index' or 'noindex'. 'default' uses the taxonomy setting.
+        $value = trim((string)$this->getMetaValue($term, self::FIELD_NOINDEX));
+
+        if (in_array($value, ['index', 'noindex'], true)) {
+            $robots['index'] = $value;
+        }
+
+        return $robots;
     }
 
     /**

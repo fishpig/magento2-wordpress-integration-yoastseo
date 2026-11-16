@@ -3,6 +3,9 @@
     <type name="FishPig\WordPress\Model\Post">
         <plugin name="fishpig-wordpress-yoast" type="FishPig\WordPress_Yoast\Plugin\FishPig_WordPress\Model\PostPlugin"/>
     </type>
+    <type name="FishPig\WordPress\Model\Term">
+        <plugin name="fishpig-wordpress-yoast" type="FishPig\WordPress_Yoast\Plugin\FishPig_WordPress\Model\TermPlugin"/>
+    </type>
     <type name="FishPig\WordPress\App\Theme\FileCollector">
         <arguments>
             <argument name="modules" xsi:type="array">

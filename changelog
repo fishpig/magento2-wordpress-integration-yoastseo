@@ -1,6 +1,14 @@
 # Changelog
 Change log for FishPig_WordPress_Yoast.
 
+## [3.3.17] - 2026-11-16
+### [Fixed]
+- Fixed per-term noindex and canonical URL not being applied. The wrong meta keys
+  were used when reading wpseo_taxonomy_meta.
+### [Added]
+- Terms set to noindex in Yoast (per term or via the taxonomy default) are now
+  excluded from the Magento XML sitemap.
+
 ## [3.3.16] - 2026-06-19
 ### [Fixed]
 - Fixed missing date helper when rewriting SEO strings.
